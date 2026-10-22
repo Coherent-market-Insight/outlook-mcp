@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Unit and installer tests
+        run: dotnet test tests/OutlookMcp.Tests --configuration Release --no-build
+
+      - name: Publish single-file executable
+        run: dotnet publish src/OutlookMcp -c Release -r win-x64 -p:PublishSingleFile=true -o dist
+
+      - name: Smoke test the executable
+        shell: pwsh
+        run: |
+          ./dist/outlook-mcp.exe version
+          ./dist/outlook-mcp.exe tools | Select-Object -First 5
+          ./dist/outlook-mcp.exe tools --read-only | Measure-Object -Line
+
+      - name: Check the generated tool table is current
+        shell: pwsh
+        run: |
+          $generated = ./dist/outlook-mcp.exe tools --markdown
+          $committed = Get-Content docs/TOOLS.md -Raw
+          foreach ($line in ($generated | Where-Object { $_ -like '| `*' })) {
+            if (-not $committed.Contains($line)) { throw "docs/TOOLS.md is out of date. Missing: $line" }
+          }

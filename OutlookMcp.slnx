@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OutlookMcp/OutlookMcp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OutlookMcp.Tests/OutlookMcp.Tests.csproj" />
+  </Folder>
+</Solution>

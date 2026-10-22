@@ -1,0 +1,33 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you got. Remove addresses and message text you do not want to share.
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `outlook-mcp version` and `outlook-mcp doctor`
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: tool
+    attributes:
+      label: Tool involved
+      placeholder: mail_list
+  - type: input
+    id: client
+    attributes:
+      label: MCP client and version
+  - type: textarea
+    id: log
+    attributes:
+      label: Debug log (optional)
+      description: Run with `--log-file`. The log contains tool names, timings and sizes, never message text.
+      render: text
