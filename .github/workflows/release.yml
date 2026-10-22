@@ -21,7 +21,11 @@ jobs:
         run: dotnet test tests/OutlookMcp.Tests --configuration Release
 
       - name: Publish
-        run: dotnet publish src/OutlookMcp -c Release -r win-x64 -p:PublishSingleFile=true -p:Version=${{ github.ref_name }} -o dist
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          dotnet publish src/OutlookMcp -c Release -r win-x64 -p:PublishSingleFile=true -p:Version=$version -o dist
+          if ((./dist/outlook-mcp.exe version) -notmatch [regex]::Escape($version)) { throw "built executable does not report version $version" }
 
       - name: Package
         shell: pwsh
